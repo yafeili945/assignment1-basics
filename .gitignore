@@ -161,3 +161,6 @@ cython_debug/
 
 .ruff_cache/
 *.zip
+
+# Local training corpora and scratch data
+/data/
