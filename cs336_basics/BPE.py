@@ -123,5 +123,3 @@ def train_bpe(input_path: str, vocab_size: int, special_tokens: list[str]) -> di
 
     merge_pretoken_pairs(pair_counts, pair_to_sequence, pretoken_sequence_to_counts, vocab, merges, vocab_size)
     return vocab, merges
-
-def train_bpe_tinystories()
