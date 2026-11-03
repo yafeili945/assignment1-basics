@@ -3,10 +3,10 @@ from einops import rearrange, einsum
 from .linear import Linear
 
 class SwiGLU(torch.nn.Module):
-    def __init__(self, d_model: int, device=None, dtype=None):
+    def __init__(self, d_model: int, d_ff: int | None = None, device=None, dtype=None):
         super().__init__()
         self.d_model = d_model
-        self.d_ff = max(64, 64 * round((8 * d_model / 3) / 64))
+        self.d_ff = d_ff if d_ff is not None else max(64, 64 * round((8 * d_model / 3) / 64))
 
         self.weight1 = Linear(self.d_model, self.d_ff)
         self.weight3 = Linear(self.d_model, self.d_ff)

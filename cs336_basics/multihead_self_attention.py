@@ -30,6 +30,9 @@ class MultiHeadSelfAttention(torch.nn.Module):
         v_heads = rearrange(V, "b ... l (h d) -> b ... h l d", h=self.num_heads)
 
         if self.rope is not None:
+            if token_positions is None:
+                token_positions = torch.arange(x.shape[-2], device=x.device)
+                
             q_heads = self.rope.forward(q_heads, token_positions)
             k_heads = self.rope.forward(k_heads, token_positions)
         
