@@ -19,7 +19,7 @@ from cs336_basics.softmax import softmax
 from cs336_basics.scaled_dot_product_attention import scaled_dot_product_attention
 from cs336_basics.multihead_self_attention import MultiHeadSelfAttention
 from cs336_basics.transformer_block import TransformerBlock
-
+from cs336_basics.transformer_lm import Transformer
 def run_linear(
     d_in: int,
     d_out: int,
@@ -401,7 +401,33 @@ def run_transformer_lm(
         Float[Tensor, "batch_size sequence_length vocab_size"]: Tensor with the predicted unnormalized
         next-word distribution for each token.
     """
-    raise NotImplementedError
+    
+    transformer = Transformer(d_model, num_heads, d_ff, vocab_size, context_length, num_layers, rope_theta)
+
+    block_key_map = {
+    "ln1.weight": "rmsnorm1.weight",
+    "ln2.weight": "rmsnorm2.weight",
+    "attn.q_proj.weight": "multiHeadAttention.wq.weight",
+    "attn.k_proj.weight": "multiHeadAttention.wk.weight",
+    "attn.v_proj.weight": "multiHeadAttention.wv.weight",
+    "attn.output_proj.weight": "multiHeadAttention.wo.weight",
+    "ffn.w1.weight": "swiGLU.weight1.weight",
+    "ffn.w2.weight": "swiGLU.weight2.weight",
+    "ffn.w3.weight": "swiGLU.weight3.weight",
+    }
+    renamed = {
+    "embedding.weight": weights["token_embeddings.weight"],
+    "rmsnorm.weight": weights["ln_final.weight"],
+    "linear.weight": weights["lm_head.weight"],
+    }
+
+    for i in range(num_layers):
+        for source_suffix, target_suffix in block_key_map.items():
+            renamed[f"blocks.{i}.{target_suffix}"] = weights[f"layers.{i}.{source_suffix}"]
+
+    transformer.load_state_dict(renamed)
+
+    return transformer.forward(in_indices)
 
 
 def run_rmsnorm(
