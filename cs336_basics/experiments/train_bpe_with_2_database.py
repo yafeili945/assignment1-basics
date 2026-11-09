@@ -1,4 +1,4 @@
-from cs336_basics.train_bpe import train_bpe
+from cs336_basics.tokenizer.train_bpe import train_bpe
 import modal
 import time, resource
 import pickle, os

@@ -1,4 +1,4 @@
-from .pretokenization_example import find_chunk_boundaries
+from ..pretokenization_example import find_chunk_boundaries
 import regex as re
 import multiprocessing
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
